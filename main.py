@@ -22,12 +22,12 @@ class main():
 
 
     def runFFmpeg(self, pVideoFileList):
-        ffmpeg = FFmpeg("ultrafast")
+        ffmpeg = FFmpeg(pPreset="ultrafast", pCrf=22)
         for videoFilePath in pVideoFileList:
             isSuccess = ffmpeg.runTranscoding(videoFilePath, videoFilePath[:-4] + "__TDV-H265__.mkv")
             if (isSuccess):
                 print("Transcoding of file completed, removing original file. ", end=" ")
-                #os.remove(videoFilePath)
+                os.remove(videoFilePath)
                 print("Done.")
 
         print("FFmpeg completed running. ")
