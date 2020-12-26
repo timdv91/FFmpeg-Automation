@@ -25,6 +25,8 @@ class FFmpeg():
         retValue = self._setVideofileTranscoding(pInFile, pOutFile, totalFrameCount)
         return retValue
 
+
+
     def _getVideofileFrameCount(self, pInFile):
         cmdArr_ffprobe = ["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=nb_frames", "-of", "default=nokey=1:noprint_wrappers=1", pInFile]
 
