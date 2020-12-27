@@ -8,7 +8,7 @@ class FFmpeg():
         self.inFile = pInFile
         self.outFile = pOutFile
 
-    def runTranscoding(self, pInFile = None, pOutFile = None):
+    def runTranscoding(self, pInFile = None, pOutFile = None, pOptionalTextToPrint = ""):
         if(pInFile == None): pInFile = self.inFile
         if(pOutFile == None): pOutFile = self.outFile
 
@@ -22,7 +22,7 @@ class FFmpeg():
             return False            # when framecount is -1 transcoding is aborted, False is returned to prevent file deletion.
 
         # start transcoding the video file.
-        retValue = self._setVideofileTranscoding(pInFile, pOutFile, totalFrameCount)
+        retValue = self._setVideofileTranscoding(pInFile, pOutFile, totalFrameCount, pOptionalTextToPrint)
         return retValue
 
 
@@ -54,8 +54,16 @@ class FFmpeg():
 
 
 
-    def _setVideofileTranscoding(self, pInFile, pOutFile, pTotalFrameCount):
-        cmd = "ffmpeg -i " + pInFile + " -c:v libx265 -preset " + self.preset + " -x265-params crf=" + self.crf + " -c:a aac -b:a 128k " + pOutFile
+    def _setVideofileTranscoding(self, pInFile, pOutFile, pTotalFrameCount, pOptionalTextToPrint = ""):
+        cmd = ""
+        optionalTextToPrint = ""
+        if self.crf != "0":
+            cmd = "ffmpeg -i " + pInFile + " -c:v libx265 -preset " + self.preset + " -x265-params crf=" + self.crf + " -c:a copy " + pOutFile
+            optionalTextToPrint = pOptionalTextToPrint + " crf=" + self.crf
+        else:
+            cmd = "ffmpeg -i " + pInFile + " -c:v libx265 -preset " + self.preset + " -x265-params lossless=1 -c:a copy " + pOutFile
+            optionalTextToPrint = pOptionalTextToPrint + " lossless transcoding."
+
         thread = pexpect.spawn(cmd)
         print("started %s" % cmd)
         cpl = thread.compile_pattern_list([pexpect.EOF, "frame= *\d+", '(.+)'])
@@ -73,7 +81,7 @@ class FFmpeg():
                     frame_number = thread.match.group(0).decode('utf-8')
 
                     perc = round(float(float(int(frame_number.split('=')[1]) / pTotalFrameCount) * 100), 2)
-                    print(frame_number, "/", pTotalFrameCount, "|", perc, "%")
+                    print(frame_number, "/", pTotalFrameCount, "|", perc, "% \t", optionalTextToPrint)
                     thread.close
                 elif i == 2:
                     # unknown_line = thread.match.group(0)

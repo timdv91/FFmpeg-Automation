@@ -13,6 +13,7 @@ class FolderCrawler():
                 if file:
                     self.folderStructure.append(os.path.join(r, file))
 
+    # sets a new varlist inside the global folder structure var:
     def setFolderStructureVar(self, pFolderstructure):
         self.folderStructure = pFolderstructure
 
