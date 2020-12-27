@@ -25,19 +25,25 @@ class main():
             if ("--crf=" in arg):
                 self.crf = arg[6:]
             if ("--minfilesize=" in arg):
-                self.minFileSizeKB = arg[14:]
+                self.minFileSizeKB = int(arg[14:])
             if ("--maxfilesize=" in arg):
-                self.maxFileSizeKB = arg[14:]
+                self.maxFileSizeKB = int(arg[14:])
 
         if(self.path == ""):
             print("Please provide a folder path!")
             quit()
 
-        print(self.path)
-        print(self.crf)
-        print(self.preset)
-        print(self.minFileSizeKB)
-        print(self.maxFileSizeKB)
+        print("Path: " + self.path)
+        print("CRF: " + self.crf)
+        print("Preset: " + self.preset)
+        print("Minimum input video filesize: " + str(self.minFileSizeKB))
+        print("Maximum input video filesize: " + str(self.maxFileSizeKB))
+
+        print('Continue with these settings? (Y/N)')
+        x = input()
+        if(x == "N" or x == "n"):
+            quit()
+
 
     def runFolderCrawler(self):
         # scan folderstructure for all files (also in subdirs)
@@ -60,6 +66,12 @@ class main():
         for video in filteredFileList:
             print("\t ", video)
         print("Crawler detected ", len(filteredFileList) , " non transcoded video files. \n")
+
+
+        print('Continue? (Y/N)')
+        x = input()
+        if(x == "N" or x == "n"):
+            quit()
 
         return filteredFileList
 

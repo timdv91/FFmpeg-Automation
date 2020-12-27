@@ -57,10 +57,12 @@ class FFmpeg():
     def _setVideofileTranscoding(self, pInFile, pOutFile, pTotalFrameCount, pOptionalTextToPrint = ""):
         cmd = ""
         optionalTextToPrint = ""
-        if self.crf != "0":
+
+        if self.crf != "0": # use preset crf encoding
             cmd = "ffmpeg -i " + pInFile + " -c:v libx265 -preset " + self.preset + " -x265-params crf=" + self.crf + " -c:a copy " + pOutFile
             optionalTextToPrint = pOptionalTextToPrint + " crf=" + self.crf
-        else:
+
+        else: # lossless encoding
             cmd = "ffmpeg -i " + pInFile + " -c:v libx265 -preset " + self.preset + " -x265-params lossless=1 -c:a copy " + pOutFile
             optionalTextToPrint = pOptionalTextToPrint + "\t\t||\t lossless transcoding."
 
@@ -91,8 +93,6 @@ class FFmpeg():
 
         except Exception:
             return False
-
-
 # Example:
 '''
 ffmpeg = FFmpeg("ultrafast")
