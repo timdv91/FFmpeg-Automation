@@ -1,5 +1,6 @@
 from myModules.FolderCrawler import FolderCrawler
 from myModules.FFmpeg import FFmpeg
+from myModules.cmdColor import bcolors
 import os
 import sys
 
@@ -81,12 +82,14 @@ class main():
         counter = 0
         for videoFilePath in pVideoFileList:
             counter += 1
-            additionalTextToPrint = "\t||\t\tfile " + str(counter) + "/" + str(len(pVideoFileList)) + " | FilePath: " + videoFilePath
+            additionalTextToPrint = bcolors.OKBLUE + "file " + str(counter) + "/" + str(len(pVideoFileList)) + bcolors.ENDC + " | FilePath: " + videoFilePath
             isSuccess = ffmpeg.runTranscoding(videoFilePath, videoFilePath[:-4] + "__TDV-H265__.mkv", additionalTextToPrint)
             if (isSuccess):
                 print("Transcoding of file completed, removing original file. ", end=" ")
                 os.remove(videoFilePath)
                 print("Done.")
+            else:
+                print("ERROR")
 
         print("FFmpeg completed running. ")
 

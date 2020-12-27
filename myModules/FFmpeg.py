@@ -1,3 +1,4 @@
+from myModules.cmdColor import bcolors
 import subprocess
 import pexpect
 
@@ -31,26 +32,28 @@ class FFmpeg():
         cmdArr_ffprobe = ["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=nb_frames", "-of", "default=nokey=1:noprint_wrappers=1", pInFile]
 
         # ffprobe is the default way to determine the amount of frames in a file, if it doesn't work fall back to ffmpeg.
-        try:
-            result = subprocess.run(cmdArr_ffprobe, stdout=subprocess.PIPE)
-            if (result.stdout.decode('utf-8') == "N/A"):
-                framesTotal = int(result.stdout.decode('utf-8'))
-                return framesTotal
+        print("Using ffprobe to collect framecount inside video file...")
+        result = subprocess.run(cmdArr_ffprobe, stdout=subprocess.PIPE)
+        print("\tffprobe counted (frames): " + result.stdout.decode('utf-8'))
 
-            # ffmpeg fallback for frame counting
-            else:
-                # ffmpeg returns a huge amount of text, we need the frame count after the "frame=" text.
-                # The "frame=" text is printed multiple times when ffmpeg is calculating the amount of frames, we need the
-                # last print with largest number for processing.
-                result = subprocess.getoutput("ffmpeg -i " + pInFile + " -map 0:v:0 -c copy -f null -")
-                while "frame=" in result:
-                    i = result.find("frame=")
-                    result = result[i+1:]
-                result = result.split(" ")[0].split("=")[1]
-                return int(result)
+        if (result.stdout.decode('utf-8') != "N/A"):
+            framesTotal = int(result.stdout.decode('utf-8'))
+            return framesTotal
 
-        except Exception:
-            return -1
+        # ffmpeg fallback for frame counting
+        else:
+            print("FFprobe failed, using ffmpeg to collect framecount inside video file...")
+            # ffmpeg returns a huge amount of text, we need the frame count after the "frame=" text.
+            # The "frame=" text is printed multiple times when ffmpeg is calculating the amount of frames, we need the
+            # last print with largest number for processing.
+            result = subprocess.getoutput("ffmpeg -i " + pInFile + " -map 0:v:0 -c copy -f null -")
+            while "frame=" in result:
+                i = result.find("frame=")
+                result = result[i+1:]
+            result = result.split(" ")[0].split("=")[1]
+
+            print("\tffmpeg counted (frames)" + result)
+            return int(result)
 
 
 
@@ -60,7 +63,7 @@ class FFmpeg():
 
         if self.crf != "0": # use preset crf encoding
             cmd = "ffmpeg -i " + pInFile + " -c:v libx265 -preset " + self.preset + " -x265-params crf=" + self.crf + " -c:a copy " + pOutFile
-            optionalTextToPrint = pOptionalTextToPrint + " crf=" + self.crf
+            optionalTextToPrint = bcolors.OKBLUE + " crf=" + self.crf + " preset=" + self.preset + " " + bcolors.ENDC + pOptionalTextToPrint
 
         else: # lossless encoding
             cmd = "ffmpeg -i " + pInFile + " -c:v libx265 -preset " + self.preset + " -x265-params lossless=1 -c:a copy " + pOutFile
@@ -83,7 +86,9 @@ class FFmpeg():
                     frame_number = thread.match.group(0).decode('utf-8')
 
                     perc = round(float(float(int(frame_number.split('=')[1]) / pTotalFrameCount) * 100), 2)
-                    print(frame_number, "/", pTotalFrameCount, "|", perc, "% \t", optionalTextToPrint)
+                    print(bcolors.OKGREEN, perc, "% (", int(frame_number.split('=')[1]), "/", int(pTotalFrameCount) , ") | " , bcolors.ENDC, end=" ")
+                    print(optionalTextToPrint, "\r", end=" ")
+
                     thread.close
                 elif i == 2:
                     # unknown_line = thread.match.group(0)
