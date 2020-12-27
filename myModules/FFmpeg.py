@@ -39,12 +39,10 @@ class FFmpeg():
 
             # ffmpeg fallback for frame counting
             else:
-                result = subprocess.getoutput("ffmpeg -i " + pInFile + " -map 0:v:0 -c copy -f null -")
-
                 # ffmpeg returns a huge amount of text, we need the frame count after the "frame=" text.
                 # The "frame=" text is printed multiple times when ffmpeg is calculating the amount of frames, we need the
                 # last print with largest number for processing.
-
+                result = subprocess.getoutput("ffmpeg -i " + pInFile + " -map 0:v:0 -c copy -f null -")
                 while "frame=" in result:
                     i = result.find("frame=")
                     result = result[i+1:]

@@ -5,19 +5,30 @@ import os
 class main():
     def __init__(self):
         videoFileList = self.runFolderCrawler()
-        self.runFFmpeg(videoFileList)
+        #self.runFFmpeg(videoFileList)
 
     def runFolderCrawler(self):
+        # scan folderstructure for all files (also in subdirs)
         fc = FolderCrawler()
         fc.setFolderStructureScan('/home/tim/Desktop/Avenue.5')
 
+        # scan folderstructure for video files (all files larger than 100MB):
         print("\nScanning folderstructure for video files: ")
         print("==================================================================")
         filteredFileList = fc.getFolderStructureOnFilesize(100000)
         for video in filteredFileList:
-            print(video)
+            print("\t ", video)
+        print("\nCrawler detected ", len(filteredFileList), " video files.")
 
-        print("Crawler detected ", len(filteredFileList), " video files.")
+        # remove files containing __TDV-H265__ in filename as these have previously been transcoded.
+        print("Scanning previously detected video files for non transcoded video files: ")
+        print("==================================================================")
+        fc.setFolderStructureVar(filteredFileList)
+        filteredFileList = fc.getFolderStructureFilteredOnString("__TDV-H265__")
+        for video in filteredFileList:
+            print("\t ", video)
+        print("Crawler detected ", len(filteredFileList) , " non transcoded video files. ")
+
         return filteredFileList
 
 

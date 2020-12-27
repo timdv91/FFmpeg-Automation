@@ -13,9 +13,20 @@ class FolderCrawler():
                 if file:
                     self.folderStructure.append(os.path.join(r, file))
 
+    def setFolderStructureVar(self, pFolderstructure):
+        self.folderStructure = pFolderstructure
+
     # Returns the complete list scanned by setFolderStructreScan.
     def getFolderStructureAll(self):
         return self.folderStructure
+
+    # returns the list without substring in argument:
+    def getFolderStructureFilteredOnString(self, pFilterStr):
+        retValueList = []
+        for file in self.folderStructure:
+            if pFilterStr not in file:
+                retValueList.append(file)
+        return retValueList
 
     # Returns a filtered list from setFolderStructureScan based on filesize tresholds.
     def getFolderStructureOnFilesize(self, pFileSizeMinKB = 0, pFileSizeMaxKB = None):
