@@ -36,7 +36,7 @@ class FFmpeg():
         result = subprocess.run(cmdArr_ffprobe, stdout=subprocess.PIPE)
         print("\tffprobe counted (frames): " + result.stdout.decode('utf-8'))
 
-        if (result.stdout.decode('utf-8') != "N/A"):
+        if ("N/A" not in result.stdout.decode('utf-8')):
             framesTotal = int(result.stdout.decode('utf-8'))
             return framesTotal
 
