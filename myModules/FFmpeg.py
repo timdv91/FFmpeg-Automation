@@ -62,7 +62,7 @@ class FFmpeg():
             optionalTextToPrint = pOptionalTextToPrint + " crf=" + self.crf
         else:
             cmd = "ffmpeg -i " + pInFile + " -c:v libx265 -preset " + self.preset + " -x265-params lossless=1 -c:a copy " + pOutFile
-            optionalTextToPrint = pOptionalTextToPrint + " lossless transcoding."
+            optionalTextToPrint = pOptionalTextToPrint + "\t\t||\t lossless transcoding."
 
         thread = pexpect.spawn(cmd)
         print("started %s" % cmd)

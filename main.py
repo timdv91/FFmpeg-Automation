@@ -69,7 +69,7 @@ class main():
         counter = 0
         for videoFilePath in pVideoFileList:
             counter += 1
-            additionalTextToPrint = "||\t\tfile " + str(counter) + "/" + str(len(pVideoFileList)) + " | FilePath: " + videoFilePath
+            additionalTextToPrint = "\t||\t\tfile " + str(counter) + "/" + str(len(pVideoFileList)) + " | FilePath: " + videoFilePath
             isSuccess = ffmpeg.runTranscoding(videoFilePath, videoFilePath[:-4] + "__TDV-H265__.mkv", additionalTextToPrint)
             if (isSuccess):
                 print("Transcoding of file completed, removing original file. ", end=" ")
