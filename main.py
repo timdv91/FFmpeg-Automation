@@ -51,13 +51,27 @@ class main():
         fc = FolderCrawler()
         fc.setFolderStructureScan(self.path)
 
-        # scan folderstructure for video files (all files larger than 100MB):
+        # scan folderstructure for video files (all files larger than xxxMB):
         print("\nScanning folderstructure for video files: ")
         print("==================================================================")
         filteredFileList = fc.getFolderStructureOnFilesize(self.minFileSizeKB, self.maxFileSizeKB)
         for video in filteredFileList:
             print("\t ", video)
         print("Crawler detected ", len(filteredFileList), " video files.")
+
+        # scan folderstructure for spaces in filepath (spaces make ffmpeg crash apparently):
+        fileList = fc.getFolderStructureOnFilesize(self.minFileSizeKB, self.maxFileSizeKB)
+        for file in fileList:
+            if(" " in file):
+                print("\nWarning spaces detected in filepath, software will replace all spaces in filenames and filepaths with '.' ! Continue? (Y/N)")
+                x = input()
+                if(x == "N" or x == "n"):
+                    quit()
+                else:
+                    fc.setFolderStructureSpacesReplacement('.', self.minFileSizeKB, self.maxFileSizeKB)
+                    fc.setFolderStructureScan(self.path)  # rescan folders for files now filenames have changed.
+                    filteredFileList = fc.getFolderStructureOnFilesize(self.minFileSizeKB, self.maxFileSizeKB)  # re-filter for files inbetween certain filesizes
+                    break
 
         # remove files containing __TDV-H265__ in filename as these have previously been transcoded.
         print("\nScanning previously detected video files for non transcoded video files: ")
@@ -67,7 +81,6 @@ class main():
         for video in filteredFileList:
             print("\t ", video)
         print("Crawler detected ", len(filteredFileList) , " non transcoded video files. \n")
-
 
         print('Continue? (Y/N)')
         x = input()

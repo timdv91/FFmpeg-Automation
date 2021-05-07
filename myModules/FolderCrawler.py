@@ -1,4 +1,5 @@
 import os
+import string
 
 class FolderCrawler():
     def __init__(self, pMinimumFileSizeKB = 1000):
@@ -20,6 +21,15 @@ class FolderCrawler():
     # Returns the complete list scanned by setFolderStructreScan.
     def getFolderStructureAll(self):
         return self.folderStructure
+
+    # returns the list without substring in argument:
+    def setFolderStructureSpacesReplacement(self, pReplacementChar, pFileSizeMinKB, pFileSizeMaxKB):
+        fileList = self.getFolderStructureOnFilesize(pFileSizeMinKB, pFileSizeMaxKB)
+        for fileNameOld in fileList:
+            if(' ' in fileNameOld):
+                fileNameNew = fileNameOld.replace(' ', pReplacementChar)
+                print("Renaming file: ", fileNameOld, " to ", fileNameNew)
+                os.rename(fileNameOld, fileNameNew)
 
     # returns the list without substring in argument:
     def getFolderStructureFilteredOnString(self, pFilterStr):
