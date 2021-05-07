@@ -68,7 +68,7 @@ class main():
                 if(x == "N" or x == "n"):
                     quit()
                 else:
-                    fc.setFolderStructureSpacesReplacement('.', self.minFileSizeKB, self.maxFileSizeKB)
+                    fc.setFolderStructureCharReplacement(' ', '.', self.minFileSizeKB, self.maxFileSizeKB)
                     fc.setFolderStructureScan(self.path)  # rescan folders for files now filenames have changed.
                     filteredFileList = fc.getFolderStructureOnFilesize(self.minFileSizeKB, self.maxFileSizeKB)  # re-filter for files inbetween certain filesizes
                     break
@@ -91,6 +91,7 @@ class main():
 
 
     def runFFmpeg(self, pVideoFileList):
+        print("test ", pVideoFileList)
         ffmpeg = FFmpeg(pPreset=self.preset, pCrf=self.crf)
         counter = 0
         for videoFilePath in pVideoFileList:

@@ -23,11 +23,11 @@ class FolderCrawler():
         return self.folderStructure
 
     # returns the list without substring in argument:
-    def setFolderStructureSpacesReplacement(self, pReplacementChar, pFileSizeMinKB, pFileSizeMaxKB):
+    def setFolderStructureCharReplacement(self, pRemoveChar, pReplacementChar, pFileSizeMinKB, pFileSizeMaxKB):
         fileList = self.getFolderStructureOnFilesize(pFileSizeMinKB, pFileSizeMaxKB)
         for fileNameOld in fileList:
-            if(' ' in fileNameOld):
-                fileNameNew = fileNameOld.replace(' ', pReplacementChar)
+            if(pRemoveChar in fileNameOld):
+                fileNameNew = fileNameOld.replace(pRemoveChar, pReplacementChar)
                 print("Renaming file: ", fileNameOld, " to ", fileNameNew)
                 os.rename(fileNameOld, fileNameNew)
 
